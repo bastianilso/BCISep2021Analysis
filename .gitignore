@@ -5,6 +5,8 @@
 # Session Data files
 .RData
 
+.stignore
+
 # CSV data
 data/
 
