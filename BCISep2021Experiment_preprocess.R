@@ -43,6 +43,7 @@ D = D %>% mutate(InputWindowClosedID = NA,
 D = D %>% group_by(GameTitle, Participant, Condition) %>% 
   mutate(InputWindowOrder = ifelse(Event == "GameStopped", -1, InputWindowOrder),
          InputWindowOrder = ifelse(Event == "GameRunning", -1, InputWindowOrder),
+         InputWindowOrderWithDecision = InputWindowOrder,
          InputWindowOrder = ifelse(InputWindow == "Closed", -1, InputWindowOrder),
          Period = NA,
          Period = ifelse(Event == "InputWindowChange" & InputWindow == "Closed", "RestPeriod", Period),
