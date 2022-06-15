@@ -54,6 +54,25 @@ D = D %>% group_by(GameTitle, Participant, Condition) %>%
   tidyr::fill(InputWindowOrderFilled, .direction="down") %>%
   tidyr::fill(Period, .direction="down")
 
+D = D %>% group_by(GameTitle, Participant, Condition) %>%
+  mutate(time_thres = lead(time_delta < 1.0),
+         not_same = InputWindowOrderFilled != lead(InputWindowOrderFilled),
+         not_na = InputWindowOrderFilled == -1,
+         InputWindowOrderFilledSoft = ifelse( InputWindowOrderFilled != lead(InputWindowOrderFilled) &
+                                              InputWindowOrderFilled == -1 & 
+                                              lead(time_delta) < 1.0, lead(InputWindowOrderFilled), InputWindowOrderFilled),
+         InputWindowOrderFilledSoft = ifelse(InputWindowOrderFilled != lag(InputWindowOrderFilled) &
+                                             InputWindowOrderFilled == -1 & 
+                                             time_delta > 1.0, lag(InputWindowOrderFilled), InputWindowOrderFilledSoft),
+         InputWindowOrderFilledSoft = ifelse(InputWindowOrderFilled != lag(InputWindowOrderFilled,2) &
+                                               InputWindowOrderFilled == -1 & 
+                                               time_delta+lag(time_delta) > 1.0, lag(InputWindowOrderFilled,2), InputWindowOrderFilledSoft),
+         InputWindowOrderFilledSoft = ifelse( InputWindowOrderFilled != lead(InputWindowOrderFilled,2) &
+                                                InputWindowOrderFilled == -1 & 
+                                                lead(time_delta)+lead(time_delta,2) < 1.0, lead(InputWindowOrderFilled,2), InputWindowOrderFilledSoft))
+
+D %>% filter(GameTitle == "kiwi", Participant == 6, Condition == "50C50F") %>% select(GameTitle, Period, Participant, Condition, Event, Timestamp, InputWindowOrderFilled, InputWindowOrderFilledSoft, TrialResult, time_thres,not_same,not_na, time_delta) %>% View()
+
 #############
 # Load Likert Data
 #############

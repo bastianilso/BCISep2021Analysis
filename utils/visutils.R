@@ -12,3 +12,23 @@ p_supsmu <- function(df, response, term, b=10) {
   curve = supsmu(df[[term]], df[[response]], bass=b)
   return(curve)
 }
+
+n_clip <- function(x, a = 0, b = 1) {
+  ifelse(x <= a,  a, ifelse(x >= b, b, x))
+}
+
+t_color <- function(x, levels, colors) {
+  #debug
+  #x = c(0.23, 0.45, 0.95, 0.01)
+  #l = tibble(levels = c(0, 0.2,0.55,0.85,1.1),
+  #           colors = c("g0","g1", "g2", "g3", "g4"))
+  #levels = l$levels
+  #colors = l$colors
+  
+  toMatch = sapply(x, function(x) min(levels[levels>=x]))
+  
+  match = match(toMatch, levels)
+  c <- colors[match]
+  
+  return(c)
+}
